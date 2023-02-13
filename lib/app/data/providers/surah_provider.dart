@@ -13,7 +13,7 @@ class SurahProvider extends GetConnect {
   // }
 
   Future<List<Surah>> getSurah() async {
-    final response = await get('https://api.quran.gading.dev/surah');
+    final response = await get('https://api.quran.gading.dev/surah/');
     return Surah.fromJsonList(response.body['data']);
   }
 

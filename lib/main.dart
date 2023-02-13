@@ -13,7 +13,7 @@ void main() {
       darkTheme: darkMode,
       themeMode: ThemeMode.system,
       title: "Application",
-      initialRoute: Routes.HOME,
+      initialRoute: Routes.INTRODUCTION,
       getPages: AppPages.routes,
     ),
   );

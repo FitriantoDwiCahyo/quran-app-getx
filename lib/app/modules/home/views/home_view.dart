@@ -13,27 +13,34 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quran App'),
+        title: Text(
+          'Quran App',
+          style: Get.textTheme.headline2,
+        ),
         centerTitle: true,
       ),
       body: DefaultTabController(
         length: 3,
         initialIndex: 0,
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.only(
+            top: 24,
+            right: 24,
+            left: 24,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Assalamualikum',
-                style: Get.textTheme.bodyText1,
+                style: Get.textTheme.headline6,
               ),
               const SizedBox(
                 height: 4,
               ),
               Text(
-                'Ayo Mulai Membaca',
-                style: Get.textTheme.headline6,
+                'Messi',
+                style: Get.textTheme.headline1,
               ),
               const SizedBox(
                 height: 24,
@@ -79,7 +86,7 @@ class HomeView extends GetView<HomeController> {
                                   ),
                                   Text(
                                     'Last Read',
-                                    style: Get.textTheme.bodyText2,
+                                    style: Get.textTheme.bodyText1,
                                   )
                                 ],
                               ),
@@ -88,14 +95,14 @@ class HomeView extends GetView<HomeController> {
                               ),
                               Text(
                                 'Al-Fatiah',
-                                style: Get.textTheme.subtitle1,
+                                style: Get.textTheme.bodyText2,
                               ),
                               const SizedBox(
                                 height: 4,
                               ),
                               Text(
                                 'Ayat No. 1',
-                                style: Get.textTheme.subtitle1,
+                                style: Get.textTheme.bodyText1,
                               ),
                             ],
                           ),
@@ -118,7 +125,10 @@ class HomeView extends GetView<HomeController> {
                 height: 24,
               ),
               TabBar(
-                labelStyle: Get.textTheme.subtitle1,
+                // unselectedLabelStyle: TextStyle(color: purpleLight),
+                labelColor: Get.isDarkMode ? purple : white,
+                unselectedLabelColor: grey,
+                labelStyle: Get.textTheme.headline3,
                 indicatorColor: purpleLight,
                 tabs: const [
                   Tab(
@@ -160,16 +170,18 @@ class HomeView extends GetView<HomeController> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
-            child: Lottie.asset('assets/lottie/loading.json'),
+            child: Lottie.asset(
+                height: 150, width: 150, 'assets/lottie/book_dua.json'),
           );
         }
+        // print(snapshot.data);
         if (!snapshot.hasData) {
           return const Center(
             child: Text('Data Empthy'),
           );
         }
-        print(snapshot.data);
         return ListView.separated(
+          itemCount: snapshot.data?.length as int,
           itemBuilder: (context, index) {
             Surah surah = snapshot.data![index];
             return ListTile(
@@ -183,14 +195,14 @@ class HomeView extends GetView<HomeController> {
                 ),
                 child: Text(
                   '${surah.number}',
-                  style: Get.textTheme.subtitle1,
+                  style: Get.textTheme.headline3,
                 ),
               ),
               title: Text('${surah.name?.transliteration?.id}',
-                  style: Get.textTheme.subtitle1),
+                  style: Get.textTheme.headline3),
               subtitle: Text(
                   '${surah.numberOfVerses} Ayat | ${surah.revelation?.id}',
-                  style: Get.textTheme.subtitle2),
+                  style: Get.textTheme.caption),
               trailing: Text(
                 '${surah.name?.short}',
                 style: const TextStyle(
@@ -201,11 +213,13 @@ class HomeView extends GetView<HomeController> {
               ),
             );
           },
-          separatorBuilder: (context, index) => const Divider(
-            thickness: 2,
-            color: Colors.grey,
+          separatorBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Divider(
+              thickness: 1,
+              color: Colors.grey[200],
+            ),
           ),
-          itemCount: snapshot.data!.length,
         );
       },
     );
