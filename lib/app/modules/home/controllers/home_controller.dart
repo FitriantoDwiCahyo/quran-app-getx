@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quran_app/app/data/models/surah_model.dart';
+import 'package:quran_app/app/data/providers/juz_provider.dart';
 import 'package:quran_app/app/data/providers/surah_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../data/models/juz_model.dart';
 
 // import '../../../data/models/detail_surah_model.dart';
 // import '../../../data/providers/detail_surah_provider.dart';
 
 class HomeController extends GetxController {
   SurahProvider surahProv = SurahProvider();
+  JuzProvider juzProv = JuzProvider();
 
   // RxBool isLightTheme = false.obs;
 
@@ -16,12 +20,16 @@ class HomeController extends GetxController {
     return await surahProv.getSurah();
   }
 
+  Future<List<Juz>> getJuzProvider() async {
+    return await juzProv.getJuz();
+  }
+
   // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   // saveThemStatus() async {
   //   SharedPreferences prefs = await _prefs;
   //   prefs.setBool('theme', isLightTheme.value);
-  // } 
+  // }
 
   // getThemeStatus() async {
   //   var _isLight = _prefs.then((SharedPreferences prefs) {

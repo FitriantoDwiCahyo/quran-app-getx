@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quran_app/app/constant/theme_app.dart';
+import 'package:quran_app/app/modules/item_tab/page_dua.dart';
+import 'package:quran_app/app/modules/item_tab/page_satu.dart';
 import 'package:quran_app/app/routes/app_pages.dart';
 
 import '../../../data/models/surah_model.dart';
@@ -147,10 +149,8 @@ class HomeView extends GetView<HomeController> {
                 child: TabBarView(
                   children: [
                     //Page 1
-                    pageSatu(),
-                    const Center(
-                      child: Text('Page 2'),
-                    ),
+                    PageSatu(),
+                    PageDua(),
                     const Center(
                       child: Text('Page 3'),
                     ),
@@ -161,67 +161,6 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget pageSatu() {
-    return FutureBuilder<List<Surah>>(
-      future: controller.getSurahProvider(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: Lottie.asset(
-                height: 150, width: 150, 'assets/lottie/book_dua.json'),
-          );
-        }
-        // print(snapshot.data);
-        if (!snapshot.hasData) {
-          return const Center(
-            child: Text('Data Empthy'),
-          );
-        }
-        return ListView.separated(
-          itemCount: snapshot.data?.length as int,
-          itemBuilder: (context, index) {
-            Surah surah = snapshot.data![index];
-            return ListTile(
-              onTap: () {
-                Get.toNamed(Routes.DETAIL_SURAH, arguments: surah);
-              },
-              leading: CircleAvatar(
-                backgroundColor: Colors.transparent,
-                backgroundImage: const AssetImage(
-                  'assets/image/border_number.png',
-                ),
-                child: Text(
-                  '${surah.number}',
-                  style: Get.textTheme.headline3,
-                ),
-              ),
-              title: Text('${surah.name?.transliteration?.id}',
-                  style: Get.textTheme.headline3),
-              subtitle: Text(
-                  '${surah.numberOfVerses} Ayat | ${surah.revelation?.id}',
-                  style: Get.textTheme.caption),
-              trailing: Text(
-                '${surah.name?.short}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: purpleLight,
-                ),
-              ),
-            );
-          },
-          separatorBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Divider(
-              thickness: 1,
-              color: Colors.grey[200],
-            ),
-          ),
-        );
-      },
     );
   }
 }
