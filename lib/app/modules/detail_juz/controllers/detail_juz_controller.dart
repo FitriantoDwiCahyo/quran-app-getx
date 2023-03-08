@@ -1,24 +1,25 @@
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:quran_app/app/constant/theme_app.dart';
-import 'package:quran_app/app/data/db/bookmark.dart';
-import 'package:quran_app/app/data/models/juz_model.dart';
-
-import 'package:quran_app/app/data/providers/detail_surah_provider.dart';
+import 'package:quran_app/app/modules/home/controllers/home_controller.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../../data/models/detail_surah_model.dart';
+import '../../../constant/theme_app.dart';
+import '../../../data/db/bookmark.dart';
+import '../../../data/models/juz_model.dart';
+import '../../../data/models/surah_model.dart';
 
-class DetailSurahController extends GetxController {
-  DetailSurahProvider detailSurahProv = DetailSurahProvider();
+class DetailJuzController extends GetxController {
+  int index = 0;
+
   final player = AudioPlayer();
 
-  Verse? lastVerse;
+
+  Verses? lastVerse;
 
   DatabaseManager database = DatabaseManager.instance;
 
-  Future<void> addBookmark(
-      bool lastRead, DetailSurah surah, Verse ayat, int indexAyat) async {
+  void addBookmark(
+      bool lastRead, Surah surah, Verses ayat, int indexAyat) async {
     Database db = await database.db;
 
     bool flagExist = false;
@@ -29,7 +30,7 @@ class DetailSurahController extends GetxController {
       List checkData = await db.query('bookmark',
           columns: ['surah', 'ayat', 'juz', 'via', 'index_ayat', 'last_read'],
           where:
-              "surah = '${surah.name!.transliteration.id.replaceAll("'", "+")}' and ayat = ${ayat.number.inSurah} and juz = ${ayat.meta.juz} and via = 'surah' and index_ayat = $indexAyat and last_read = 0");
+              "surah = '${surah.name?.transliteration?.id?.replaceAll("'", "+")}' and ayat = ${ayat.number!.inSurah} and juz = ${ayat.meta!.juz} and via = 'juz' and index_ayat = $indexAyat and last_read = 0");
 
       if (checkData.isNotEmpty) {
         flagExist = true;
@@ -38,20 +39,17 @@ class DetailSurahController extends GetxController {
 
     if (flagExist == false) {
       await db.insert('bookmark', {
-        'surah': '${surah.name?.transliteration.id.replaceAll("'", "+")}',
-        'ayat': ayat.number.inSurah,
-        'juz': ayat.meta.juz,
-        'via': 'surah',
+        'surah': '${surah.name?.transliteration?.id?.replaceAll("'", "+")}',
+        'ayat': ayat.number?.inSurah,
+        'juz': ayat.meta?.juz,
+        'via': 'juz',
         'index_ayat': indexAyat,
         'last_read': lastRead == true ? 1 : 0,
       });
 
       Get.back(); //tutup dialog
       Get.snackbar('Success', 'Berhasil menambahkan bookmark',
-          colorText: white,
-          duration: Duration(
-            seconds: 1,
-          ));
+          colorText: white);
     } else {
       Get.back(); //tutup dialog
       Get.snackbar('Something wrong', 'Bookmark sudah tersedia',
@@ -61,30 +59,26 @@ class DetailSurahController extends GetxController {
     print(data);
   }
 
-  Future<DetailSurah?> getDetail(String id) async {
-    return await detailSurahProv.getDetailSurah(id);
-  }
-
-  void playAudio(Verse? ayat) async {
-    if (ayat?.audio.primary != null) {
+  void playAudio(Verses? ayat) async {
+    if (ayat?.audio!.primary != null) {
       try {
         //kondisi untuk mencegah penumpukan audio ketika di pause dan memulai audio ynag berikutnya
         if (lastVerse == null) {
           lastVerse = ayat;
         }
 
-        lastVerse!.audioSelected = 'stop';
+        lastVerse!.audioStatus = 'stop';
         lastVerse = ayat;
-        lastVerse!.audioSelected = 'stop';
+        lastVerse!.audioStatus = 'stop';
         update();
 
         await player.stop();
-        await player.setUrl(ayat!.audio.primary);
-        ayat.audioSelected = 'playing';
+        await player.setUrl(ayat!.audio!.primary.toString());
+        ayat.audioStatus = 'playing';
         update();
 
         await player.play();
-        ayat.audioSelected = 'stop';
+        ayat.audioStatus = 'stop';
         update();
 
         await player.stop();
@@ -102,10 +96,10 @@ class DetailSurahController extends GetxController {
     }
   }
 
-  void pauseAudio(Verse ayat) async {
+  void pauseAudio(Verses ayat) async {
     try {
       await player.pause();
-      ayat.audioSelected = 'pause';
+      ayat.audioStatus = 'pause';
       update();
     } on PlayerException catch (e) {
       Get.defaultDialog(
@@ -116,12 +110,12 @@ class DetailSurahController extends GetxController {
     }
   }
 
-  void resumeAudio(Verse ayat) async {
+  void resumeAudio(Verses ayat) async {
     try {
-      ayat.audioSelected = 'playing';
+      ayat.audioStatus = 'playing';
       update();
       await player.play();
-      ayat.audioSelected = 'stop';
+      ayat.audioStatus = 'stop';
       update();
     } on PlayerException catch (e) {
       Get.defaultDialog(
@@ -132,10 +126,10 @@ class DetailSurahController extends GetxController {
     }
   }
 
-  void stopAudio(Verse ayat) async {
+  void stopAudio(Verses ayat) async {
     try {
       await player.stop();
-      ayat.audioSelected = 'stop';
+      ayat.audioStatus = 'stop';
       update();
     } on PlayerException catch (e) {
       Get.defaultDialog(

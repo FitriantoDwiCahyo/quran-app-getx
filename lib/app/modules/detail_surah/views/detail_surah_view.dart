@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:quran_app/app/modules/home/controllers/home_controller.dart';
 
 import '../../../constant/theme_app.dart';
 import '../../../data/models/detail_surah_model.dart' as detailSurah;
@@ -10,6 +11,7 @@ import '../controllers/detail_surah_controller.dart';
 
 class DetailSurahView extends GetView<DetailSurahController> {
   Surah surah = Get.arguments;
+  final homeC = Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,6 +184,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                     ),
                   ),
                   itemBuilder: (context, index) {
+                    // print(index);
                     detailSurah.Verse ayat = detailSurahAl!.verses![index];
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -190,8 +193,8 @@ class DetailSurahView extends GetView<DetailSurahController> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           color: Get.isDarkMode
-                              ? cardDark.withOpacity(0.1)
-                              : cardLight,
+                              ? cardLight
+                              : cardDark.withOpacity(0.1),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 13),
@@ -216,30 +219,109 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                         ),
                                       ),
                                     ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                            Icons.share_outlined,
-                                            color: purpleLight,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                            Icons.play_arrow_outlined,
-                                            color: purpleLight,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                            Icons.bookmark_border,
-                                            color: purpleLight,
-                                          ),
-                                        ),
-                                      ],
+                                    GetBuilder<DetailSurahController>(
+                                      init: DetailSurahController(),
+                                      initState: (_) {},
+                                      builder: (c) {
+                                        return Row(
+                                          children: [
+                                            (ayat.audioSelected == 'stop')
+                                                ? IconButton(
+                                                    onPressed: () {
+                                                      controller
+                                                          .playAudio(ayat);
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.play_arrow,
+                                                      color: purpleLight,
+                                                    ),
+                                                  )
+                                                : Row(
+                                                    children: [
+                                                      (ayat.audioSelected ==
+                                                              'playing')
+                                                          ? IconButton(
+                                                              onPressed: () {
+                                                                controller
+                                                                    .pauseAudio(
+                                                                        ayat);
+                                                              },
+                                                              icon: const Icon(
+                                                                Icons.pause,
+                                                                color:
+                                                                    purpleLight,
+                                                              ),
+                                                            )
+                                                          : IconButton(
+                                                              onPressed: () {
+                                                                controller
+                                                                    .resumeAudio(
+                                                                        ayat);
+                                                              },
+                                                              icon: const Icon(
+                                                                Icons
+                                                                    .play_arrow,
+                                                                color:
+                                                                    purpleLight,
+                                                              ),
+                                                            ),
+                                                      IconButton(
+                                                        onPressed: () {
+                                                          controller
+                                                              .stopAudio(ayat);
+                                                        },
+                                                        icon: const Icon(
+                                                          Icons.stop,
+                                                          color: purpleLight,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                            IconButton(
+                                              onPressed: () {
+                                                Get.defaultDialog(
+                                                  title: 'Bookmark',
+                                                  middleText:
+                                                      'Pilih jenis bookmark',
+                                                  actions: [
+                                                    ElevatedButton(
+                                                      onPressed: () async{
+                                                        await controller.addBookmark(
+                                                          true,
+                                                          snapshot.data!,
+                                                          ayat,
+                                                          index,
+                                                        );
+                                                        homeC.update();
+                                                      },
+                                                      child: const Text(
+                                                        'Last Read',
+                                                      ),
+                                                    ),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        controller.addBookmark(
+                                                          false,
+                                                          snapshot.data!,
+                                                          ayat,
+                                                          index,
+                                                        );
+                                                      },
+                                                      child: const Text(
+                                                        'Bookmark',
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                              icon: const Icon(
+                                                Icons.bookmark_border,
+                                                color: purpleLight,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),

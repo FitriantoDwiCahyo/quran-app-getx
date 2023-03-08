@@ -30,18 +30,41 @@ class PageDua extends GetView<HomeController> {
           itemCount: snapshot.data?.length as int,
           itemBuilder: (context, index) {
             juz.Juz allJuz = snapshot.data![index];
+
+            //logic untuk selection surah sesuai jumlah surah di juz
+            List<Surah> rawAllSurahInJuz = [];
+            List<Surah> allSurahInJuz = [];
+
+            for (Surah item in controller.allSurah) {
+              rawAllSurahInJuz.add(item);
+              if (item.number == allJuz.juzEndSurahNumber) {
+                break;
+              }
+            }
+
+            for (Surah item in rawAllSurahInJuz.reversed.toList()) {
+              allSurahInJuz.add(item);
+              if (item.number == allJuz.juzStartSurahNumber) {
+                break;
+              }
+            }
             return ListTile(
               onTap: () {
-                Get.toNamed(Routes.DETAIL_SURAH, arguments: allJuz);
+                Get.toNamed(Routes.DETAIL_JUZ, arguments: {
+                  'juz': allJuz,
+                  'surah': allSurahInJuz.reversed.toList(),
+                });
               },
               leading: CircleAvatar(
                 backgroundColor: Colors.transparent,
                 backgroundImage: const AssetImage(
                   'assets/image/border_number.png',
                 ),
-                child: Text(
-                  '${allJuz.juz}',
-                  style: Get.textTheme.headline3,
+                child: Center(
+                  child: Text(
+                    '${allJuz.juz}',
+                    style: Get.textTheme.headline3,
+                  ),
                 ),
               ),
               title: Text('Juz ${allJuz.juz}', style: Get.textTheme.headline3),

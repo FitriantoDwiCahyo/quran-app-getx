@@ -1,7 +1,7 @@
 class Juz {
   int? juz;
-  dynamic? juzStartSurahNumber;
-  dynamic? juzEndSurahNumber;
+  dynamic juzStartSurahNumber;
+  dynamic juzEndSurahNumber;
   String? juzStartInfo;
   String? juzEndInfo;
   int? totalVerses;
@@ -55,20 +55,22 @@ class Juz {
 }
 
 class Verses {
+  Verses(
+      {required this.number,
+      required this.meta,
+      required this.text,
+      required this.translation,
+      required this.audio,
+      required this.tafsir,
+      this.audioStatus});
+
   Number? number;
   Meta? meta;
   Text? text;
   Translation? translation;
   Audio? audio;
   Tafsir? tafsir;
-
-  Verses(
-      {this.number,
-      this.meta,
-      this.text,
-      this.translation,
-      this.audio,
-      this.tafsir});
+  String? audioStatus;
 
   Verses.fromJson(Map<String, dynamic> json) {
     number = json['number'] != null ? Number?.fromJson(json['number']) : null;
@@ -101,6 +103,7 @@ class Verses {
     if (tafsir != null) {
       data['tafsir'] = tafsir?.toJson();
     }
+
     return data;
   }
 }
