@@ -50,6 +50,7 @@ class HomeController extends GetxController {
     List<Map<String, dynamic>> dataLastRead = await db.query(
       'bookmark',
       where: 'last_read = 1',
+      orderBy: 'surah',
     );
 
     if (dataLastRead.isEmpty) {

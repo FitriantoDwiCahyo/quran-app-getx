@@ -148,7 +148,9 @@ class HomeView extends GetView<HomeController> {
                                   middleText: 'Anda yakin?',
                                   actions: [
                                     OutlinedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Get.back();
+                                      },
                                       child: const Text('Cancel',
                                           style: TextStyle(color: purple)),
                                     ),
@@ -169,7 +171,27 @@ class HomeView extends GetView<HomeController> {
                                 );
                               }
                             },
-                            onTap: () {},
+                            onTap: () {
+                              if (lastRead != null) {
+                                switch (lastRead['via']) {
+                                  case 'juz':
+                                    print('via juz');
+
+                                    break;
+                                  default:
+                                    Get.toNamed(
+                                      Routes.DETAIL_SURAH,
+                                      arguments: {
+                                        'name': lastRead['surah']
+                                            .toString()
+                                            .replaceAll('+', "'"),
+                                        'number': lastRead['number_surah'],
+                                        'bookmark': lastRead,
+                                      },
+                                    );
+                                }
+                              }
+                            },
                             child: Stack(
                               children: [
                                 Container(

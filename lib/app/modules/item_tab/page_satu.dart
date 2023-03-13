@@ -8,7 +8,6 @@ import '../../data/models/surah_model.dart';
 import '../../routes/app_pages.dart';
 
 class PageSatu extends GetView<HomeController> {
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Surah>>(
@@ -32,7 +31,10 @@ class PageSatu extends GetView<HomeController> {
             Surah surah = snapshot.data![index];
             return ListTile(
               onTap: () {
-                Get.toNamed(Routes.DETAIL_SURAH, arguments: surah);
+                Get.toNamed(Routes.DETAIL_SURAH, arguments: {
+                  'name': surah.name!.transliteration!.id,
+                  'number': surah.number!,
+                },);
               },
               leading: CircleAvatar(
                 backgroundColor: Colors.transparent,

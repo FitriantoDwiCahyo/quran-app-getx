@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quran_app/app/constant/theme_app.dart';
 
+import '../../routes/app_pages.dart';
 import '../home/controllers/home_controller.dart';
 
 class PageTiga extends GetView<HomeController> {
@@ -35,7 +36,12 @@ class PageTiga extends GetView<HomeController> {
                 Map<String, dynamic> dataBookmark = snapshot.data![index];
                 return ListTile(
                   onTap: (() {
-                    print(dataBookmark);
+                    Get.toNamed(Routes.DETAIL_SURAH, arguments: {
+                      'name':
+                          dataBookmark['surah'].toString().replaceAll("+", "'"),
+                      'number': dataBookmark['number_surah'],
+                      'bookmark': dataBookmark,
+                    });
                   }),
                   leading: CircleAvatar(
                     backgroundColor: Colors.transparent,
